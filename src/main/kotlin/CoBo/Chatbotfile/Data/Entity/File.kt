@@ -15,5 +15,6 @@ data class File(
     var name: String?,
     var path: String,
     var size: Long,
-    var createdAt: LocalDateTime = LocalDateTime.now()
+    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var isDel:Boolean
 )
