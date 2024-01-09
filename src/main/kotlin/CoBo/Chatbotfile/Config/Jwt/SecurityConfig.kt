@@ -1,5 +1,6 @@
 package CoBo.Chatbotfile.Config.Jwt
 
+import CoBo.Chatbotfile.Data.Enum.RoleEnum
 import lombok.RequiredArgsConstructor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,8 +32,10 @@ class SecurityConfig(
             }
             .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
             .authorizeHttpRequests { authorize ->
-                authorize.requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**")
-                    .permitAll()
+                authorize.requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+                    authorize.requestMatchers("/api/file/download").hasAuthority(RoleEnum.STUDENT.name)
+                    authorize.requestMatchers("/api/file/**").hasAuthority(RoleEnum.DEVELOPER.name)
+                    authorize.requestMatchers("/api/file/**").hasAuthority(RoleEnum.PROFESSOR.name)
                     .anyRequest().authenticated()
             }
             .formLogin { obj: FormLoginConfigurer<HttpSecurity> -> obj.disable() }

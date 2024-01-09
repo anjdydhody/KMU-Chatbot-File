@@ -12,12 +12,12 @@ class JwtTokenProvider(
     val secretKey: String
 ) {
 
-    fun getUserId(token: String):Int{
+    fun getUserId(token: String):Integer{
         return Jwts.parser()
             .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .body
-            .get("userId", Int::class.java)
+            .get("userId", java.lang.Integer::class.java)
     }
 
     fun getUserRole(token: String):String{
