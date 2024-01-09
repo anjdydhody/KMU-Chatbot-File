@@ -33,7 +33,7 @@ class SecurityConfig(
             .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
             .authorizeHttpRequests { authorize ->
                 authorize.requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
-                    authorize.requestMatchers("/api/file/download").hasAuthority(RoleEnum.STUDENT.name)
+                    authorize.requestMatchers("/api/file/download/**").hasAuthority(RoleEnum.STUDENT.name)
                     authorize.requestMatchers("/api/file/**").hasAuthority(RoleEnum.DEVELOPER.name)
                     authorize.requestMatchers("/api/file/**").hasAuthority(RoleEnum.PROFESSOR.name)
                     .anyRequest().authenticated()
