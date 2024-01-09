@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 class FileController(private val fileService: FileService) {
 
 
-    @GetMapping("/download/{fileId}")
+    @GetMapping("/{fileId}")
     @Operation(summary = "파일 다운로드 API", description = "다운로드 할 파일의 FileId 입력")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
