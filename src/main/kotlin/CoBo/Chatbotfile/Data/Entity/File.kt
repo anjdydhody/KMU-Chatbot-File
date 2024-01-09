@@ -12,7 +12,7 @@ data class File(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int?,
-    var name: String?,
+    var name: String,
     var path: String,
     var size: Long,
     var createdAt: LocalDateTime = LocalDateTime.now(),
