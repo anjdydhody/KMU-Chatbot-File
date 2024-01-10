@@ -1,5 +1,7 @@
 package CoBo.Chatbotfile.Service.Impl
 
+import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
+import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
 import CoBo.Chatbotfile.Repository.FileRepository
 import CoBo.Chatbotfile.Service.FileService
@@ -8,10 +10,8 @@ import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.data.domain.PageRequest
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
@@ -39,7 +39,7 @@ class FileServiceImpl(
 
         val file = File(
             id = null,
-            name = originalName,
+            name = originalName ?: newName,
             path = newName,
             size = multipartFile.size,
             isDel = false)
@@ -51,7 +51,7 @@ class FileServiceImpl(
         return ResponseEntity(HttpStatus.OK)
     }
 
-    override fun getDownload(fileId: Int): ResponseEntity<Resource> {
+    override fun get(fileId: Int): ResponseEntity<Resource> {
 
         val optionalFile = fileRepository.findById(fileId)
 
@@ -69,5 +69,17 @@ class FileServiceImpl(
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$encodedFileName\"")
             .body(resource)
+    }
+
+    override fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes> {
+
+        val fileGetListElementResList = ArrayList<FileGetListElementRes>()
+
+        for (file in fileRepository.findAll(PageRequest.of(page, page_size)))
+            fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt))
+
+        return ResponseEntity(FileGetListRes(
+            fileCount = fileRepository.count(), fileGetListElementResList = fileGetListElementResList
+        ), HttpStatus.OK)
     }
 }
