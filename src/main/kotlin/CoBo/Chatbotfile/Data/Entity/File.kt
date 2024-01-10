@@ -15,6 +15,7 @@ data class File(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int?,
     var name: String,
+    var fileName: String,
     var path: String,
     var size: Long,
     var createdAt: LocalDateTime = LocalDateTime.now(),
