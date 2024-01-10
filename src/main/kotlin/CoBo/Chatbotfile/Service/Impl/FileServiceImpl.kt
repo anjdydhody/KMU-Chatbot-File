@@ -1,5 +1,6 @@
 package CoBo.Chatbotfile.Service.Impl
 
+import CoBo.Chatbotfile.Data.Dto.File.Req.FilePostReq
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
@@ -11,10 +12,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
-import org.springframework.web.multipart.MultipartFile
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -30,8 +31,8 @@ class FileServiceImpl(
     private val filePath: String,
     private val fileRepository: FileRepository):FileService {
 
-    override fun post(multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
-        val originalName = multipartFile.originalFilename
+    override fun post(filePostReq: FilePostReq): ResponseEntity<HttpStatus> {
+        val originalName = filePostReq.multipartFile.originalFilename
 
         val extension = StringUtils.getFilenameExtension(originalName)
         val newName = filePath + UUID.randomUUID() + "." + extension
@@ -39,12 +40,13 @@ class FileServiceImpl(
 
         val file = File(
             id = null,
-            name = originalName ?: newName,
+            name = filePostReq.name,
+            fileName = originalName ?: newName,
             path = newName,
-            size = multipartFile.size,
-            isDel = false)
+            size = filePostReq.multipartFile.size,
+            deleted = false)
 
-        Files.copy(multipartFile.inputStream, filePath)
+        Files.copy(filePostReq.multipartFile.inputStream, filePath)
 
         fileRepository.save(file)
 
@@ -55,7 +57,7 @@ class FileServiceImpl(
 
         val optionalFile = fileRepository.findById(fileId)
 
-        if(optionalFile.isEmpty || optionalFile.get().isDel)
+        if(optionalFile.isEmpty || optionalFile.get().deleted)
             throw NoSuchElementException()
 
         val file = java.io.File(optionalFile.get().path)
@@ -63,7 +65,7 @@ class FileServiceImpl(
         val fileContent = Files.readAllBytes(file.toPath())
 
         val resource = ByteArrayResource(fileContent)
-        val encodedFileName = URLEncoder.encode(optionalFile.get().name, StandardCharsets.UTF_8.toString())
+        val encodedFileName = URLEncoder.encode(optionalFile.get().fileName, StandardCharsets.UTF_8.toString())
 
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -75,11 +77,30 @@ class FileServiceImpl(
 
         val fileGetListElementResList = ArrayList<FileGetListElementRes>()
 
-        for (file in fileRepository.findAll(PageRequest.of(page, page_size)))
-            fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt))
+        for (file in fileRepository.findAllByDeleted(false, PageRequest.of(page, page_size, Sort.by("id").descending())))
+            fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt, fileName = file.fileName))
 
         return ResponseEntity(FileGetListRes(
-            fileCount = fileRepository.count(), fileGetListElementResList = fileGetListElementResList
+            fileCount = fileRepository.countAllByDeleted(false), fileGetListElementResList = fileGetListElementResList
         ), HttpStatus.OK)
+    }
+
+    override fun delete(fileIdList: List<Int>): ResponseEntity<HttpStatus> {
+
+        fileRepository.deleteAllById(fileIdList)
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    override fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus> {
+        val file = fileRepository.findById(fileId)
+
+        if(file.isEmpty || file.get().deleted)
+            throw NoSuchElementException()
+
+        file.get().name = name
+        fileRepository.save(file.get())
+
+        return ResponseEntity(HttpStatus.OK)
     }
 }
