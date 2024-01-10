@@ -11,4 +11,5 @@ interface FileService {
     fun get(fileId: Int): ResponseEntity<Resource>
     fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes>
     fun delete(fileIdList:List<Int>): ResponseEntity<HttpStatus>
+    fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus>
 }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -50,4 +51,16 @@ class AuthFileController(private val fileService: FileService) {
         return fileService.delete(fileIdList)
     }
 
+    @PatchMapping
+    @Operation(summary = "파일 수정 API")
+    @Parameters(
+        Parameter(name = "fileId", description = "수정할 파일의 Id", example = "27"),
+        Parameter(name = "name", description = "수정할 이름", example = "킹승규의 비밀노트")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
+    )
+    fun patch(@RequestParam fileId: Int, @RequestParam name: String): ResponseEntity<HttpStatus>{
+        return fileService.patch(fileId, name)
+    }
 }

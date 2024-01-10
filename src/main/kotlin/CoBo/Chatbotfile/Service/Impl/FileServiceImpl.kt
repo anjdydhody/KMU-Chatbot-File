@@ -90,4 +90,16 @@ class FileServiceImpl(
 
         return ResponseEntity(HttpStatus.OK)
     }
+
+    override fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus> {
+        val file = fileRepository.findById(fileId)
+
+        if(file.isEmpty || file.get().deleted)
+            throw NoSuchElementException()
+
+        file.get().name = name
+        fileRepository.save(file.get())
+
+        return ResponseEntity(HttpStatus.OK)
+    }
 }
