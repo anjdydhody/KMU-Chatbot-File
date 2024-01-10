@@ -4,9 +4,11 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import org.hibernate.annotations.SQLDelete
 import java.time.LocalDateTime
 
 @Entity
+@SQLDelete(sql = "UPDATE file SET deleted = true WHERE id = ?")
 data class File(
 
     @Id
@@ -16,5 +18,5 @@ data class File(
     var path: String,
     var size: Long,
     var createdAt: LocalDateTime = LocalDateTime.now(),
-    var isDel:Boolean
+    var deleted:Boolean
 )
