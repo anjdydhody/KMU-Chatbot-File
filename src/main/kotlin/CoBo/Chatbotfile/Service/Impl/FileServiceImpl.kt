@@ -1,6 +1,5 @@
 package CoBo.Chatbotfile.Service.Impl
 
-import CoBo.Chatbotfile.Data.Dto.File.Req.FilePostReq
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
+import org.springframework.web.multipart.MultipartFile
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -31,8 +31,8 @@ class FileServiceImpl(
     private val filePath: String,
     private val fileRepository: FileRepository):FileService {
 
-    override fun post(filePostReq: FilePostReq): ResponseEntity<HttpStatus> {
-        val originalName = filePostReq.multipartFile.originalFilename
+    override fun post(fileName: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+        val originalName = multipartFile.originalFilename
 
         val extension = StringUtils.getFilenameExtension(originalName)
         val newName = filePath + UUID.randomUUID() + "." + extension
@@ -40,13 +40,13 @@ class FileServiceImpl(
 
         val file = File(
             id = null,
-            name = filePostReq.name,
+            name = fileName,
             fileName = originalName ?: newName,
             path = newName,
-            size = filePostReq.multipartFile.size,
+            size = multipartFile.size,
             deleted = false)
 
-        Files.copy(filePostReq.multipartFile.inputStream, filePath)
+        Files.copy(multipartFile.inputStream, filePath)
 
         fileRepository.save(file)
 
