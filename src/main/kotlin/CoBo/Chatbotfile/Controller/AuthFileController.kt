@@ -2,6 +2,8 @@ package CoBo.Chatbotfile.Controller
 
 import CoBo.Chatbotfile.Service.FileService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -10,8 +12,10 @@ import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -33,5 +37,17 @@ class AuthFileController(private val fileService: FileService) {
         return fileService.post(multipartFile)
     }
 
+    @DeleteMapping
+    @Operation(summary = "파일 삭제 API")
+    @Parameters(
+        Parameter(name = "fileIdList", description = "삭제할 파일들의 Id 리스트", example = "[1, 2, 3]")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
+        ApiResponse(responseCode = "403", description = "인증 실패", content = arrayOf(Content()))
+    )
+    fun delete(@RequestParam fileIdList:List<Int>):ResponseEntity<HttpStatus>{
+        return fileService.delete(fileIdList)
+    }
 
 }

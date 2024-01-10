@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
@@ -42,7 +43,7 @@ class FileServiceImpl(
             name = originalName ?: newName,
             path = newName,
             size = multipartFile.size,
-            isDel = false)
+            deleted = false)
 
         Files.copy(multipartFile.inputStream, filePath)
 
@@ -55,7 +56,7 @@ class FileServiceImpl(
 
         val optionalFile = fileRepository.findById(fileId)
 
-        if(optionalFile.isEmpty || optionalFile.get().isDel)
+        if(optionalFile.isEmpty || optionalFile.get().deleted)
             throw NoSuchElementException()
 
         val file = java.io.File(optionalFile.get().path)
@@ -75,11 +76,18 @@ class FileServiceImpl(
 
         val fileGetListElementResList = ArrayList<FileGetListElementRes>()
 
-        for (file in fileRepository.findAll(PageRequest.of(page, page_size)))
+        for (file in fileRepository.findAllByDeleted(false, PageRequest.of(page, page_size, Sort.by("id").descending())))
             fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt))
 
         return ResponseEntity(FileGetListRes(
-            fileCount = fileRepository.count(), fileGetListElementResList = fileGetListElementResList
+            fileCount = fileRepository.countAllByDeleted(false), fileGetListElementResList = fileGetListElementResList
         ), HttpStatus.OK)
+    }
+
+    override fun delete(fileIdList: List<Int>): ResponseEntity<HttpStatus> {
+
+        fileRepository.deleteAllById(fileIdList)
+
+        return ResponseEntity(HttpStatus.OK)
     }
 }

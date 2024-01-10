@@ -10,4 +10,5 @@ interface FileService {
     fun post(multipartFile: MultipartFile): ResponseEntity<HttpStatus>
     fun get(fileId: Int): ResponseEntity<Resource>
     fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes>
+    fun delete(fileIdList:List<Int>): ResponseEntity<HttpStatus>
 }
