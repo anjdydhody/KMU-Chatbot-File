@@ -34,8 +34,13 @@ class FileServiceImpl(
     override fun post(fileName: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
         val originalName = multipartFile.originalFilename
 
+        var newName = filePath + UUID.randomUUID()
+
         val extension = StringUtils.getFilenameExtension(originalName)
-        val newName = filePath + UUID.randomUUID() + "." + extension
+
+        if (extension != null)
+            newName += ".$extension"
+
         val filePath = Paths.get(newName)
 
         val file = File(
