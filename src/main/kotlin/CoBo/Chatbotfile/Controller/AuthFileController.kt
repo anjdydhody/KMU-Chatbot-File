@@ -21,8 +21,7 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "파일 관련 API(교수, 개발자만 사용 가능)")
 @RequiredArgsConstructor
 class AuthFileController(
-    private val fileService: FileService,
-    private val categoryService: CategoryService) {
+    private val fileService: FileService) {
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(summary = "파일 업로드 API", description = "교수, 개발자 권한만 사용 가능")

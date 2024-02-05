@@ -33,7 +33,7 @@ class SecurityConfig(
             .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
             .authorizeHttpRequests { authorize ->
                 authorize.requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/api/auth/file/**").hasAnyAuthority(RoleEnum.DEVELOPER.name, RoleEnum.PROFESSOR.name)
+                    .requestMatchers("/api/auth/file/**", "/api/category/**").hasAnyAuthority(RoleEnum.DEVELOPER.name, RoleEnum.PROFESSOR.name)
                     .anyRequest().authenticated()
             }
             .formLogin { obj: FormLoginConfigurer<HttpSecurity> -> obj.disable() }
