@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/category")
-@Tag(name = "카테고리 관련 API")
+@RequestMapping("/api/auth/category")
+@Tag(name = "카테고리 관련 API(교수, 개발자만 사용 가능)")
 @RequiredArgsConstructor
-class CategoryController(
-    private val categoryService: CategoryService) {
-
-    
+class AuthCategoryController(
+    private val categoryService: CategoryService
+) {
 }
