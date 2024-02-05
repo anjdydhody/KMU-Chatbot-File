@@ -1,5 +1,6 @@
 package CoBo.Chatbotfile.Controller
 
+import CoBo.Chatbotfile.Service.CategoryService
 import CoBo.Chatbotfile.Service.FileService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -19,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/auth/file")
 @Tag(name = "파일 관련 API(교수, 개발자만 사용 가능)")
 @RequiredArgsConstructor
-class AuthFileController(private val fileService: FileService) {
+class AuthFileController(
+    private val fileService: FileService,
+    private val categoryService: CategoryService) {
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(summary = "파일 업로드 API", description = "교수, 개발자 권한만 사용 가능")
