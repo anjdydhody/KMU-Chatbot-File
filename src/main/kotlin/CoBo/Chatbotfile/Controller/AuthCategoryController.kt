@@ -2,6 +2,8 @@ package CoBo.Chatbotfile.Controller
 
 import CoBo.Chatbotfile.Service.CategoryService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -25,5 +27,19 @@ class AuthCategoryController(
     )
     fun post(@RequestParam category: String): ResponseEntity<HttpStatus> {
         return categoryService.post(category)
+    }
+
+    @PatchMapping
+    @Operation(summary = "카테고리명 변경 API", description = "해당 카테고리명을 수정")
+    @Parameters(
+        Parameter(name = "oldCategory", description = "변경 전의 카테고리 명"),
+        Parameter(name = "newCategory", description = "변경 할 카테고리 명")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
+        ApiResponse(responseCode = "409", description = "기존의 데이터와 충돌합니다.", content = arrayOf(Content()))
+    )
+    fun patch(@RequestParam oldCategory: String, @RequestParam newCategory: String): ResponseEntity<HttpStatus>{
+        return categoryService.patch(oldCategory, newCategory)
     }
 }

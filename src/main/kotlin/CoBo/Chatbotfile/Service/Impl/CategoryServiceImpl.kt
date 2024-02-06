@@ -24,4 +24,9 @@ class CategoryServiceImpl(
         categoryRepository.saveOrUpdate(category)
         return ResponseEntity(HttpStatus.OK)
     }
+
+    override fun patch(oldCategory: String, newCategory: String): ResponseEntity<HttpStatus> {
+        categoryRepository.updateName(oldCategory, newCategory)
+        return ResponseEntity(HttpStatus.OK)
+    }
 }
