@@ -27,6 +27,7 @@ class AuthFileController(
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
         ApiResponse(responseCode = "403", description = "권한이 없습니다.", content = arrayOf(Content())),
+        ApiResponse(responseCode = "404", description = "해당 카테고리가 존재하지 않습니다", content = arrayOf(Content())),
         ApiResponse(responseCode = "503", description = "파일을 업로드하는 과정에서 에러가 발생했습니다.", content = arrayOf(Content()))
     )
     fun post(@RequestParam fileName: String, @RequestParam category: String, @RequestPart multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
