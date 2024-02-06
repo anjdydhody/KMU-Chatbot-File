@@ -1,9 +1,19 @@
 package CoBo.Chatbotfile.Repository.Impl
 
+import CoBo.Chatbotfile.Repository.Custom.CategoryRepositoryCustom
 import lombok.RequiredArgsConstructor
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @RequiredArgsConstructor
-class CategoryRepositoryImpl {
+class CategoryRepositoryImpl(
+    private val jdbcTemplate: JdbcTemplate): CategoryRepositoryCustom {
+    @Transactional
+    override fun saveOrUpdate(category: String) {
+        val sql = "INSERT INTO category (name, file_count, deleted) VALUES (?, 0, false) " +
+                "ON DUPLICATE KEY UPDATE deleted = false"
+        jdbcTemplate.update(sql, category)
+    }
 }
