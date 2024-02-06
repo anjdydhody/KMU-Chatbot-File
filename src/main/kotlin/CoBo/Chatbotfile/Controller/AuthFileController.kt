@@ -1,6 +1,5 @@
 package CoBo.Chatbotfile.Controller
 
-import CoBo.Chatbotfile.Service.CategoryService
 import CoBo.Chatbotfile.Service.FileService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -30,8 +29,8 @@ class AuthFileController(
         ApiResponse(responseCode = "403", description = "권한이 없습니다.", content = arrayOf(Content())),
         ApiResponse(responseCode = "503", description = "파일을 업로드하는 과정에서 에러가 발생했습니다.", content = arrayOf(Content()))
     )
-    fun post(@RequestParam fileName: String, @RequestPart multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
-        return fileService.post(fileName, multipartFile)
+    fun post(@RequestParam fileName: String, @RequestParam category: String, @RequestPart multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+        return fileService.post(fileName, category, multipartFile)
     }
 
     @DeleteMapping

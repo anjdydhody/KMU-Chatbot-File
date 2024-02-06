@@ -3,8 +3,10 @@ package CoBo.Chatbotfile.Service.Impl
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
+import CoBo.Chatbotfile.Repository.CategoryRepository
 import CoBo.Chatbotfile.Repository.FileRepository
 import CoBo.Chatbotfile.Service.FileService
+import jakarta.persistence.EntityNotFoundException
 import lombok.RequiredArgsConstructor
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
@@ -29,9 +31,14 @@ import java.util.UUID
 class FileServiceImpl(
     @Value("\${file.path}")
     private val filePath: String,
-    private val fileRepository: FileRepository):FileService {
+    private val fileRepository: FileRepository,
+    private val categoryRepository: CategoryRepository):FileService {
 
-    override fun post(fileName: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+    override fun post(fileName: String, category: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+
+        val categoryEntity = categoryRepository.findById(category)
+            .orElseThrow{EntityNotFoundException("Category not found : $category")}
+
         val originalName = multipartFile.originalFilename
 
         var newName = filePath + UUID.randomUUID()
@@ -49,7 +56,8 @@ class FileServiceImpl(
             fileName = originalName ?: newName,
             path = newName,
             size = multipartFile.size,
-            deleted = false)
+            deleted = false,
+            category = categoryEntity)
 
         Files.copy(multipartFile.inputStream, filePath)
 

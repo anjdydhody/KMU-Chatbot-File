@@ -4,6 +4,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import org.hibernate.annotations.SQLDelete
 import java.time.LocalDateTime
 
@@ -16,6 +17,8 @@ data class File(
     var id: Int?,
     var name: String,
     var fileName: String,
+    @ManyToOne
+    var category: Category,
     var path: String,
     var size: Long,
     var createdAt: LocalDateTime = LocalDateTime.now(),

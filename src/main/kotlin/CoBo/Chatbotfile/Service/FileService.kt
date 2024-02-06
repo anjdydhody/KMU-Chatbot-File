@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.multipart.MultipartFile
 
 interface FileService {
-    fun post(fileName: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus>
+    fun post(fileName: String, category: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus>
     fun get(fileId: Int): ResponseEntity<Resource>
     fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes>
     fun delete(fileIdList:List<Int>): ResponseEntity<HttpStatus>
