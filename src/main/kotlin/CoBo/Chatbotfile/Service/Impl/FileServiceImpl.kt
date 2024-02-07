@@ -97,6 +97,11 @@ class FileServiceImpl(
         return ResponseEntity(HttpStatus.OK)
     }
 
+    override fun getAll(page: Int, page_size: Int): ResponseEntity<List<FileGetListElementRes>> {
+        return ResponseEntity.ok()
+            .body(fileRepository.findFileGetListElementResAll(PageRequest.of(page, page_size, Sort.by("id").descending())))
+    }
+
     override fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus> {
         val file = fileRepository.findById(fileId)
 

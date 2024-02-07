@@ -13,5 +13,7 @@ data class FileGetListElementRes(
     @Schema(description = "파일의 사이즈", example = "312445")
     val size: Long,
     @Schema(description = "파일의 업로드 날짜", example = "2024-01-09T23:03:23.322177")
-    val created_at: LocalDateTime
+    val created_at: LocalDateTime,
+    @Schema(description = "카테고리명", example = "킹승규")
+    val category: String?
 )

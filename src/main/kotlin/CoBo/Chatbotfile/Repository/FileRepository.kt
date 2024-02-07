@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface FileRepository: JpaRepository<File, Int> {
-    @Query("SELECT new CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes(f.id, f.name, f.fileName, f.size, f.createdAt) " +
+    @Query("SELECT new CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes(f.id, f.name, f.fileName, f.size, f.createdAt, f.category.name) " +
             "FROM File f INNER JOIN f.category c WHERE f.deleted = false AND f.category.name = :category")
     fun findFileGetListElementResAllByCategory(category: String, pageable: Pageable):List<FileGetListElementRes>
+    @Query("SELECT new CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes(f.id, f.name, f.fileName, f.size, f.createdAt, f.category.name) " +
+            "FROM File f WHERE f.deleted = false")
+    fun findFileGetListElementResAll(pageable: Pageable): List<FileGetListElementRes>
 }

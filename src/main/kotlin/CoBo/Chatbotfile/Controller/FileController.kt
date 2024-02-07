@@ -42,7 +42,7 @@ class FileController(private val fileService: FileService) {
     @Parameters(
         Parameter(name = "page", description = "페이지 번호(0부터 시작)"),
         Parameter(name = "pageSize", description = "한 페이지에 들어갈 사이즈"),
-        Parameter(name = "category", description = "검색할 카테고")
+        Parameter(name = "category", description = "검색할 카테고리")
     )
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListElementRes::class)))),
@@ -51,5 +51,20 @@ class FileController(private val fileService: FileService) {
     )
     fun getList(@RequestParam page: Int, @RequestParam pageSize: Int, @RequestParam category: String):ResponseEntity<List<FileGetListElementRes>>{
         return fileService.getList(page, pageSize, category)
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "파일리스트 조회 API", description = "카테고리 없음")
+    @Parameters(
+        Parameter(name = "page", description = "페이지 번호(0부터 시작)"),
+        Parameter(name = "pageSize", description = "한 페이지에 들어갈 사이즈")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListElementRes::class)))),
+        ApiResponse(responseCode = "400", description = "잘못된 파라미터 전달", content = arrayOf(Content())),
+        ApiResponse(responseCode = "403", description = "인증 실패", content = arrayOf(Content()))
+    )
+    fun getAll(@RequestParam page: Int, @RequestParam pageSize: Int):ResponseEntity<List<FileGetListElementRes>>{
+        return fileService.getAll(page, pageSize)
     }
 }
