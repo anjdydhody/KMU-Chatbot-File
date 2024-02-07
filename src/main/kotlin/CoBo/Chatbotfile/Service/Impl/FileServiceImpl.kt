@@ -62,6 +62,9 @@ class FileServiceImpl(
 
         fileRepository.save(file)
 
+        categoryEntity.count += 1
+        categoryRepository.save(categoryEntity)
+
         return ResponseEntity(HttpStatus.OK)
     }
 
