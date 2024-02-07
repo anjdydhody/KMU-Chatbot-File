@@ -8,4 +8,5 @@ interface CategoryService {
     fun getAll(): ResponseEntity<List<CategoryGetAllRes>>
     fun post(category: String): ResponseEntity<HttpStatus>
     fun patch(oldCategory: String, newCategory: String): ResponseEntity<HttpStatus>
+    fun delete(category: String): ResponseEntity<HttpStatus>
 }

@@ -42,4 +42,18 @@ class AuthCategoryController(
     fun patch(@RequestParam oldCategory: String, @RequestParam newCategory: String): ResponseEntity<HttpStatus>{
         return categoryService.patch(oldCategory, newCategory)
     }
+
+    @DeleteMapping
+    @Operation(summary = "카테고리 삭제 API", description = "해당 카테고리가 없다면 카테고리를 삭제")
+    @Parameters(
+        Parameter(name = "category", description = "삭제할 카테고리 이름")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
+        ApiResponse(responseCode = "404", description = "삭제에 실패했습니다.", content = arrayOf(Content()))
+    )
+    fun delete(@RequestParam category: String): ResponseEntity<HttpStatus>{
+        return categoryService.delete(category)
+    }
+
 }

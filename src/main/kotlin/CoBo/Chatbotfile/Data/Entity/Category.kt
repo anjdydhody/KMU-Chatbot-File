@@ -9,7 +9,7 @@ import org.hibernate.annotations.SQLDelete
 data class Category(
     @Id
     var name: String,
-    var file_count: Int,
+    var count: Int,
     var deleted: Boolean
 
 )

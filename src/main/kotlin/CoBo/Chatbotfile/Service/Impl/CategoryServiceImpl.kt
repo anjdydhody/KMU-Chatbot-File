@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,13 @@ class CategoryServiceImpl(
     override fun patch(oldCategory: String, newCategory: String): ResponseEntity<HttpStatus> {
         categoryRepository.updateName(oldCategory, newCategory)
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    @Transactional
+    override fun delete(category: String): ResponseEntity<HttpStatus> {
+        return if(categoryRepository.deleteByNameAndCount(category, 0) > 0)
+            ResponseEntity(HttpStatus.OK)
+        else
+            ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 }
