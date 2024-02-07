@@ -19,17 +19,19 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/auth/file")
 @Tag(name = "파일 관련 API(교수, 개발자만 사용 가능)")
 @RequiredArgsConstructor
-class AuthFileController(private val fileService: FileService) {
+class AuthFileController(
+    private val fileService: FileService) {
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(summary = "파일 업로드 API", description = "교수, 개발자 권한만 사용 가능")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content())),
         ApiResponse(responseCode = "403", description = "권한이 없습니다.", content = arrayOf(Content())),
+        ApiResponse(responseCode = "404", description = "해당 카테고리가 존재하지 않습니다", content = arrayOf(Content())),
         ApiResponse(responseCode = "503", description = "파일을 업로드하는 과정에서 에러가 발생했습니다.", content = arrayOf(Content()))
     )
-    fun post(@RequestParam fileName: String, @RequestPart multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
-        return fileService.post(fileName, multipartFile)
+    fun post(@RequestParam fileName: String, @RequestParam category: String, @RequestPart multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+        return fileService.post(fileName, category, multipartFile)
     }
 
     @DeleteMapping

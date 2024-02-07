@@ -1,12 +1,18 @@
 package CoBo.Chatbotfile.Repository
 
+import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
 import CoBo.Chatbotfile.Data.Entity.File
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
 interface FileRepository: JpaRepository<File, Int> {
-    fun countAllByDeleted(deleted: Boolean): Long
-    fun findAllByDeleted(deleted: Boolean, pageRequest: PageRequest): List<File>
+    @Query("SELECT new CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes(f.id, f.name, f.fileName, f.size, f.createdAt, f.category.name) " +
+            "FROM File f INNER JOIN f.category c WHERE f.deleted = false AND f.category.name = :category")
+    fun findFileGetListElementResAllByCategory(category: String, pageable: Pageable):List<FileGetListElementRes>
+    @Query("SELECT new CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes(f.id, f.name, f.fileName, f.size, f.createdAt, f.category.name) " +
+            "FROM File f WHERE f.deleted = false")
+    fun findFileGetListElementResAll(pageable: Pageable): List<FileGetListElementRes>
 }

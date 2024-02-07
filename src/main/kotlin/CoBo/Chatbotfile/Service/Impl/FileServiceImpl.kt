@@ -1,10 +1,11 @@
 package CoBo.Chatbotfile.Service.Impl
 
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
-import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
+import CoBo.Chatbotfile.Repository.CategoryRepository
 import CoBo.Chatbotfile.Repository.FileRepository
 import CoBo.Chatbotfile.Service.FileService
+import jakarta.persistence.EntityNotFoundException
 import lombok.RequiredArgsConstructor
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
@@ -29,9 +30,14 @@ import java.util.UUID
 class FileServiceImpl(
     @Value("\${file.path}")
     private val filePath: String,
-    private val fileRepository: FileRepository):FileService {
+    private val fileRepository: FileRepository,
+    private val categoryRepository: CategoryRepository):FileService {
 
-    override fun post(fileName: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+    override fun post(fileName: String, category: String, multipartFile: MultipartFile): ResponseEntity<HttpStatus> {
+
+        val categoryEntity = categoryRepository.findById(category)
+            .orElseThrow{EntityNotFoundException("Category not found : $category")}
+
         val originalName = multipartFile.originalFilename
 
         var newName = filePath + UUID.randomUUID()
@@ -49,11 +55,15 @@ class FileServiceImpl(
             fileName = originalName ?: newName,
             path = newName,
             size = multipartFile.size,
-            deleted = false)
+            deleted = false,
+            category = categoryEntity)
 
         Files.copy(multipartFile.inputStream, filePath)
 
         fileRepository.save(file)
+
+        categoryEntity.count += 1
+        categoryRepository.save(categoryEntity)
 
         return ResponseEntity(HttpStatus.OK)
     }
@@ -78,16 +88,9 @@ class FileServiceImpl(
             .body(resource)
     }
 
-    override fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes> {
-
-        val fileGetListElementResList = ArrayList<FileGetListElementRes>()
-
-        for (file in fileRepository.findAllByDeleted(false, PageRequest.of(page, page_size, Sort.by("id").descending())))
-            fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt, fileName = file.fileName))
-
-        return ResponseEntity(FileGetListRes(
-            fileCount = fileRepository.countAllByDeleted(false), fileGetListElementResList = fileGetListElementResList
-        ), HttpStatus.OK)
+    override fun getList(page: Int, page_size: Int, category: String): ResponseEntity<List<FileGetListElementRes>> {
+        return ResponseEntity.ok()
+            .body(fileRepository.findFileGetListElementResAllByCategory(category, PageRequest.of(page, page_size, Sort.by("id").descending())))
     }
 
     override fun delete(fileIdList: List<Int>): ResponseEntity<HttpStatus> {
@@ -95,6 +98,11 @@ class FileServiceImpl(
         fileRepository.deleteAllById(fileIdList)
 
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    override fun getAll(page: Int, page_size: Int): ResponseEntity<List<FileGetListElementRes>> {
+        return ResponseEntity.ok()
+            .body(fileRepository.findFileGetListElementResAll(PageRequest.of(page, page_size, Sort.by("id").descending())))
     }
 
     override fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus> {

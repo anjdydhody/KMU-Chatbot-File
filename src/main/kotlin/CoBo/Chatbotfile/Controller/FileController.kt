@@ -1,6 +1,6 @@
 package CoBo.Chatbotfile.Controller
 
-import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
+import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
 import CoBo.Chatbotfile.Service.FileService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.io.File
 
 @RestController
 @RequestMapping("/api/file")
@@ -42,13 +41,30 @@ class FileController(private val fileService: FileService) {
     @Operation(summary = "파일리스트 조회 API")
     @Parameters(
         Parameter(name = "page", description = "페이지 번호(0부터 시작)"),
+        Parameter(name = "pageSize", description = "한 페이지에 들어갈 사이즈"),
+        Parameter(name = "category", description = "검색할 카테고리")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListElementRes::class)))),
+        ApiResponse(responseCode = "400", description = "잘못된 파라미터 전달", content = arrayOf(Content())),
+        ApiResponse(responseCode = "403", description = "인증 실패", content = arrayOf(Content()))
+    )
+    fun getList(@RequestParam page: Int, @RequestParam pageSize: Int, @RequestParam category: String):ResponseEntity<List<FileGetListElementRes>>{
+        return fileService.getList(page, pageSize, category)
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "파일리스트 조회 API", description = "카테고리 없음")
+    @Parameters(
+        Parameter(name = "page", description = "페이지 번호(0부터 시작)"),
         Parameter(name = "pageSize", description = "한 페이지에 들어갈 사이즈")
     )
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListRes::class)))),
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListElementRes::class)))),
+        ApiResponse(responseCode = "400", description = "잘못된 파라미터 전달", content = arrayOf(Content())),
         ApiResponse(responseCode = "403", description = "인증 실패", content = arrayOf(Content()))
     )
-    fun getList(@RequestParam page: Int, @RequestParam pageSize: Int):ResponseEntity<FileGetListRes>{
-        return fileService.getList(page, pageSize)
+    fun getAll(@RequestParam page: Int, @RequestParam pageSize: Int):ResponseEntity<List<FileGetListElementRes>>{
+        return fileService.getAll(page, pageSize)
     }
 }
