@@ -1,7 +1,6 @@
 package CoBo.Chatbotfile.Service.Impl
 
 import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListElementRes
-import CoBo.Chatbotfile.Data.Dto.File.Res.FileGetListRes
 import CoBo.Chatbotfile.Data.Entity.File
 import CoBo.Chatbotfile.Repository.CategoryRepository
 import CoBo.Chatbotfile.Repository.FileRepository
@@ -86,16 +85,9 @@ class FileServiceImpl(
             .body(resource)
     }
 
-    override fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes> {
-
-        val fileGetListElementResList = ArrayList<FileGetListElementRes>()
-
-        for (file in fileRepository.findAllByDeleted(false, PageRequest.of(page, page_size, Sort.by("id").descending())))
-            fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt, fileName = file.fileName))
-
-        return ResponseEntity(FileGetListRes(
-            fileCount = fileRepository.countAllByDeleted(false), fileGetListElementResList = fileGetListElementResList
-        ), HttpStatus.OK)
+    override fun getList(page: Int, page_size: Int, category: String): ResponseEntity<List<FileGetListElementRes>> {
+        return ResponseEntity.ok()
+            .body(fileRepository.findFileGetListElementResAllByCategory(category, PageRequest.of(page, page_size, Sort.by("id").descending())))
     }
 
     override fun delete(fileIdList: List<Int>): ResponseEntity<HttpStatus> {
