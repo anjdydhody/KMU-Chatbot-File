@@ -13,7 +13,7 @@ class CategoryRepositoryImpl(
     private val jdbcTemplate: JdbcTemplate): CategoryRepositoryCustom {
     @Transactional
     override fun saveOrUpdate(category: String) {
-        val sql = "INSERT INTO category (name, file_count, deleted) VALUES (?, 0, false) " +
+        val sql = "INSERT INTO category (name, count, deleted) VALUES (?, 0, false) " +
                 "ON DUPLICATE KEY UPDATE deleted = false"
         jdbcTemplate.update(sql, category)
     }
