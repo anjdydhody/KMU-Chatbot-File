@@ -78,15 +78,15 @@ class FileServiceImpl(
             .body(resource)
     }
 
-    override fun getList(page: Int, page_size: Int): ResponseEntity<FileGetListRes> {
+    override fun getList(): ResponseEntity<FileGetListRes> {
 
         val fileGetListElementResList = ArrayList<FileGetListElementRes>()
 
-        for (file in fileRepository.findAllByDeleted(false, PageRequest.of(page, page_size, Sort.by("id").descending())))
+        for (file in fileRepository.findAllByDeleted(false))
             fileGetListElementResList.add(FileGetListElementRes(id = file.id, name = file.name, size = file.size, created_at = file.createdAt, fileName = file.fileName))
 
         return ResponseEntity(FileGetListRes(
-            fileCount = fileRepository.countAllByDeleted(false), fileGetListElementResList = fileGetListElementResList
+            fileGetListElementResList = fileGetListElementResList
         ), HttpStatus.OK)
     }
 

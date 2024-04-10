@@ -40,15 +40,11 @@ class FileController(private val fileService: FileService) {
 
     @GetMapping("/list")
     @Operation(summary = "파일리스트 조회 API")
-    @Parameters(
-        Parameter(name = "page", description = "페이지 번호(0부터 시작)"),
-        Parameter(name = "pageSize", description = "한 페이지에 들어갈 사이즈")
-    )
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = FileGetListRes::class)))),
         ApiResponse(responseCode = "403", description = "인증 실패", content = arrayOf(Content()))
     )
-    fun getList(@RequestParam page: Int, @RequestParam pageSize: Int):ResponseEntity<FileGetListRes>{
-        return fileService.getList(page, pageSize)
+    fun getList():ResponseEntity<FileGetListRes>{
+        return fileService.getList()
     }
 }

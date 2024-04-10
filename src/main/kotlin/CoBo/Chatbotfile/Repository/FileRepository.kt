@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FileRepository: JpaRepository<File, Int> {
     fun countAllByDeleted(deleted: Boolean): Long
-    fun findAllByDeleted(deleted: Boolean, pageRequest: PageRequest): List<File>
+    fun findAllByDeleted(deleted: Boolean): List<File>
 }
