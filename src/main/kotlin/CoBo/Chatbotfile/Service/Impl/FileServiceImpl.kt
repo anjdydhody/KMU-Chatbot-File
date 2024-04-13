@@ -88,9 +88,9 @@ class FileServiceImpl(
             .body(resource)
     }
 
-    override fun getList(page: Int, page_size: Int, category: String): ResponseEntity<List<FileGetListElementRes>> {
+    override fun getList(category: String): ResponseEntity<List<FileGetListElementRes>> {
         return ResponseEntity.ok()
-            .body(fileRepository.findFileGetListElementResAllByCategory(category, PageRequest.of(page, page_size, Sort.by("id").descending())))
+            .body(fileRepository.findFileGetListElementResAllByCategory(category))
     }
 
     override fun delete(fileIdList: List<Int>): ResponseEntity<HttpStatus> {
@@ -100,9 +100,9 @@ class FileServiceImpl(
         return ResponseEntity(HttpStatus.OK)
     }
 
-    override fun getAll(page: Int, page_size: Int): ResponseEntity<List<FileGetListElementRes>> {
+    override fun getAll(): ResponseEntity<List<FileGetListElementRes>> {
         return ResponseEntity.ok()
-            .body(fileRepository.findFileGetListElementResAll(PageRequest.of(page, page_size, Sort.by("id").descending())))
+            .body(fileRepository.findFileGetListElementResAll())
     }
 
     override fun patch(fileId: Int, name: String): ResponseEntity<HttpStatus> {
